@@ -1,5 +1,10 @@
 from database.database import get_connection
 
+from dataclasses import dataclass
+@dataclass
+class User:
+    id: int
+    name: str
 
 def create_table():
     connection = get_connection()
@@ -26,7 +31,7 @@ def get_users():
     cursor.execute("SELECT * FROM users")
     users = cursor.fetchall()
     connection.close()
-    return users
+    return [User(*user) for user in users]
 
 def get_user(user_id):
     connection = get_connection()
@@ -34,7 +39,7 @@ def get_user(user_id):
     cursor.execute("SELECT * FROM users WHERE id=?",(user_id,))
     user = cursor.fetchone()
     connection.close()
-    return user
+    return User(*user)
 
 def update_user(user_id,new_name):
     connection = get_connection()
