@@ -1,11 +1,6 @@
 from database.database import get_connection
 
-from dataclasses import dataclass
-@dataclass
-class User:
-    id: int
-    name: str
-
+from models.user import User
 class user_repository:
     def create_table(self):
         connection = get_connection()
@@ -42,7 +37,7 @@ class user_repository:
         connection.close()
         return User(*user)
 
-    def update_user(self, user_id,new_name):
+    def update_user(self, user_id, new_name):
         connection = get_connection()
         cursor = connection.cursor()
         cursor.execute("UPDATE users SET name=? WHERE id=?",(new_name,user_id))
