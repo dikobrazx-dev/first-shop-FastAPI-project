@@ -4,6 +4,8 @@ class UserService:
     def __init__(self, repository):
         self.repository = repository
 
+    def create_table(self):
+        return self.repository.create_table()
         
     def get_user(self, user_id):
         return self.repository.get_user(user_id)
@@ -21,8 +23,9 @@ class UserService:
         return self.repository.update_user(User(*user))
 
     def delete_all(self):
-        return self.repository.delete()
+        return self.repository.delete_all()
 
-
+    def delete_table(self):
+        return self.repository.delete_table()
 
     

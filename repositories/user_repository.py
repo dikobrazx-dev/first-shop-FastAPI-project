@@ -57,3 +57,10 @@ class user_repository:
         cursor.execute("DELETE FROM users")
         connection.commit()
         connection.close()
+
+    def delete_table(self):
+        connection = get_connection()
+        cursor = connection.cursor()
+        cursor.execute("DROP TABLE users")
+        connection.commit()
+        connection.close()
