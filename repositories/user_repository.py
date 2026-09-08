@@ -1,7 +1,7 @@
 from database.database import get_connection
 
 from models.user import User
-class user_repository:
+class UserRepository:
     def create_table(self):
         connection = get_connection()
         cursor = connection.cursor()
