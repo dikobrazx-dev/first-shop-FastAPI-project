@@ -29,10 +29,10 @@ class user_repository:
         connection.close()
         return [User(*user) for user in users]
 
-    def get_user(self, user):
+    def get_user(self, user_id):
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute("SELECT * FROM users WHERE id=?",(user.id,))
+        cursor.execute("SELECT * FROM users WHERE id=?",(user_id,))
         user = cursor.fetchone()
         connection.close()
         return User(*user)
@@ -44,14 +44,14 @@ class user_repository:
         connection.commit()
         connection.close()
 
-    def delete_user(self, user):
+    def delete_user(self, user_id):
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute("DELETE FROM users WHERE id=?",(user.id,))
+        cursor.execute("DELETE FROM users WHERE id=?",(user_id,))
         connection.commit()
         connection.close()
 
-    def delete(self):
+    def delete_all(self):
         connection = get_connection()
         cursor = connection.cursor()
         cursor.execute("DELETE FROM users")
