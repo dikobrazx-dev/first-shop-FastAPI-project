@@ -14,10 +14,10 @@ class user_repository:
         connection.commit()
         connection.close()
 
-    def add_user(self, name):
+    def add_user(self, user):
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute("INSERT INTO users(name) VALUES(?)",(name,))
+        cursor.execute("INSERT INTO users(name) VALUES(?)",(user.name,))
         connection.commit()
         connection.close()
 
@@ -29,25 +29,25 @@ class user_repository:
         connection.close()
         return [User(*user) for user in users]
 
-    def get_user(self, user_id):
+    def get_user(self, user):
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute("SELECT * FROM users WHERE id=?",(user_id,))
+        cursor.execute("SELECT * FROM users WHERE id=?",(user.id,))
         user = cursor.fetchone()
         connection.close()
         return User(*user)
 
-    def update_user(self, user_id, new_name):
+    def update_user(self, user):
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute("UPDATE users SET name=? WHERE id=?",(new_name,user_id))
+        cursor.execute("UPDATE users SET name=? WHERE id=?",(user.name, user.id))
         connection.commit()
         connection.close()
 
-    def delete_user(self, user_id):
+    def delete_user(self, user):
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute("DELETE FROM users WHERE id=?",(user_id,))
+        cursor.execute("DELETE FROM users WHERE id=?",(user.id,))
         connection.commit()
         connection.close()
 
