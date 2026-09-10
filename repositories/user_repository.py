@@ -14,12 +14,14 @@ class UserRepository:
         connection.commit()
         connection.close()
 
+
     def add_user(self, user):
         connection = get_connection()
         cursor = connection.cursor()
         cursor.execute("INSERT INTO users(name) VALUES(?)",(user.name,))
         connection.commit()
         connection.close()
+
 
     def get_users(self):
         connection = get_connection()
@@ -37,12 +39,14 @@ class UserRepository:
         connection.close()
         return User(*user)
 
+
     def update_user(self, user):
         connection = get_connection()
         cursor = connection.cursor()
         cursor.execute("UPDATE users SET name=? WHERE id=?",(user.name, user.id))
         connection.commit()
         connection.close()
+
 
     def delete_user(self, user_id):
         connection = get_connection()
