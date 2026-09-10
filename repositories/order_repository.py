@@ -19,7 +19,8 @@ class OrderRepository:
         cursor.execute("INSERT INTO orders(user_id) VALUES(?)",(order.user_id,))
         connection.commit()
         connection.close()
-    def get_user(self, order_id):
+
+    def get_order(self, order_id):
         connection = get_connection()
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM orders WHERE id=?",(order_id,))
