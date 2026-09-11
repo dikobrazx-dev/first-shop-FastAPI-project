@@ -14,10 +14,10 @@ class OrderRepository:
         connection.close()
 
 
-    def add_order(self, order):
+    def add_order(self, user_id):
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute("INSERT INTO orders(user_id) VALUES(?)",(order.user_id,))
+        cursor.execute("INSERT INTO orders(user_id) VALUES(?)",(user_id,))
         connection.commit()
         connection.close()
 

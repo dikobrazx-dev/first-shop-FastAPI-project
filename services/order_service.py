@@ -10,8 +10,11 @@ class OrderService:
     def create_orders_table(self):
         return self.order_repository.create_orders_table()
 
-    def add_order(self, order):
-        return self.order_repository.add_order(Order(*order))
+    def add_order(self, user_id):
+        if self.user_repository.get_user(user_id) is not None:
+            return self.order_repository.add_order(user_id)
+        else:
+            return "Not such user_id"
 
     def get_orders(self):
         return self.order_repository.get_orders()

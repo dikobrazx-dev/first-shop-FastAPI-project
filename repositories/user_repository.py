@@ -37,7 +37,8 @@ class UserRepository:
         cursor.execute("SELECT * FROM users WHERE id=?",(user_id,))
         user = cursor.fetchone()
         connection.close()
-        return User(*user)
+        if user is not None:
+            return User(*user)
 
 
     def update_user(self, user):
