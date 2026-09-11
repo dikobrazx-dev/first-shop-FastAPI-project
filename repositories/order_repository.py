@@ -39,10 +39,10 @@ class OrderRepository:
         return [Order(*order) for order in orders]
         
 
-    def update_order(self, order):
+    def update_order(self, id, user_id):
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute("UPDATE orders SET user_id=? WHERE id=?",(order.user_id, order.id))
+        cursor.execute("UPDATE orders SET user_id=? WHERE id=?",(user_id, id))
         connection.commit()
         connection.close()
 

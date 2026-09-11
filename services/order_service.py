@@ -22,8 +22,11 @@ class OrderService:
     def get_order(self, order_id):
         return self.order_repository.get_order(order_id)
 
-    def update_order(self, order):
-        return self.order_repository.update_order(Order(*order))
+    def update_order(self, id, user_id):
+        if self.user_repository.get_user(user_id) is not None:
+            return self.order_repository.update_order(id, user_id)
+        else:
+            return "Not such user_id"
 
     def delete_order(self, order_id):
         return self.order_repository.delete_order(order_id)
