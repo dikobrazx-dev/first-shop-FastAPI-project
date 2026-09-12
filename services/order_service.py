@@ -1,4 +1,4 @@
-
+import exceptions
 class OrderService:
 
     def __init__(self, order_repository, user_service, product_service):
@@ -10,10 +10,11 @@ class OrderService:
         return self.order_repository.create_orders_table()
 
     def add_order(self, user_id):
-        if self.user_service.get_user(user_id) is not None:
-            return self.order_repository.add_order(user_id)
-        else:
-            return "Not such user_id"
+        if self.user_service.get_user(user_id) is None:
+            raise exceptions.UserNotFoundError(
+                f"User {user_id} not found"
+            )
+        return self.order_repository.add_order(user_id)
 
     def get_orders(self):
         return self.order_repository.get_orders()
@@ -22,10 +23,11 @@ class OrderService:
         return self.order_repository.get_order(order_id)
 
     def update_order(self, id, user_id):
-        if self.user_service.get_user(user_id) is not None:
-            return self.order_repository.update_order(id, user_id)
-        else:
-            return "Not such user_id"
+        if self.user_service.get_user(user_id) is None:
+            raise exceptions.UserNotFoundError(
+                f"User {user_id} not found"
+            )
+        return self.order_repository.update_order(id, user_id)
 
     def delete_order(self, order_id):
         return self.order_repository.delete_order(order_id)
