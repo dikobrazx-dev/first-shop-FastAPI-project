@@ -42,8 +42,8 @@ class OrderRepository:
         try:
             cursor.execute("SELECT * FROM orders WHERE id=?",(order_id,))
             order = cursor.fetchone()
-            connection.close()
-            return Order(*order)
+            if order is not None:
+                return Order(*order)
         except sqlite3.Error:
             raise
 
@@ -57,7 +57,6 @@ class OrderRepository:
         try:
             cursor.execute("SELECT * FROM orders")
             orders = cursor.fetchall()
-            connection.close()
             return [Order(*order) for order in orders]
         except sqlite3.Error:
             raise

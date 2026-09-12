@@ -4,7 +4,7 @@ class OrderService:
     def __init__(self, order_repository, user_service, product_service):
         self.order_repository = order_repository
         self.user_service = user_service
-        self.product_user = product_service
+        self.product_service = product_service
 
     def create_orders_table(self):
         return self.order_repository.create_orders_table()
@@ -44,6 +44,18 @@ class OrderService:
         return self.order_repository.create_order_items_table()
 
     def add_order_item(self, item_order_id, item_product_id, item_quantity):
+        if self.order_repository.get_order(item_order_id) is None:
+            raise exceptions.OrderNotFoundError(
+                f"Order {item_order_id} not found"
+            )
+        if self.product_service.get_product(item_product_id) is None:
+            raise exceptions.ProductNotFoundError(
+                f"Product {item_product_id} not found"
+            )
+        if item_quantity <=0:
+            raise exceptions.InvalidQuantityError(
+                f"Quantity can not be negative or zero"
+            )
         return self.order_repository.add_order_item(item_order_id, item_product_id, item_quantity)
 
     def get_order_items(self, order_id):

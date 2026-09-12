@@ -57,8 +57,9 @@ class ProductRepository:
         cursor = connection.cursor()
         try:
             cursor.execute("SELECT * FROM products WHERE id=?",(product_id,))
-            user = cursor.fetchone()
-            return Product(*user)
+            product = cursor.fetchone()
+            if product is not None:
+                return Product(*product)
         except sqlite3.Error:
             raise
 
