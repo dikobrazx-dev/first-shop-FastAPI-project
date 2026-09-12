@@ -15,10 +15,10 @@ class UserRepository:
         connection.close()
 
 
-    def add_user(self, user):
+    def add_user(self, user_id):
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute("INSERT INTO users(name) VALUES(?)",(user.name,))
+        cursor.execute("INSERT INTO users(name) VALUES(?)",(user_id,))
         connection.commit()
         connection.close()
 
@@ -41,10 +41,10 @@ class UserRepository:
             return User(*user)
 
 
-    def update_user(self, user):
+    def update_user(self, user_id, user_name):
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute("UPDATE users SET name=? WHERE id=?",(user.name, user.id))
+        cursor.execute("UPDATE users SET name=? WHERE id=?",(user_name, user_id))
         connection.commit()
         connection.close()
 
