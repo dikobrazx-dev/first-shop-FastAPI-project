@@ -1,4 +1,4 @@
-from models.product import Product
+
 
 class ProductService:
 
@@ -8,8 +8,8 @@ class ProductService:
     def create_table(self):
         return self.repository.create_table()
 
-    def add_product(self, product):
-        return self.repository.add_product(Product(*product))
+    def add_product(self, product_name, product_price):
+        return self.repository.add_product(product_name, product_price)
 
     def get_product(self, product_id):
         return self.repository.get_product(product_id)
@@ -17,8 +17,8 @@ class ProductService:
     def get_products(self):
         return self.repository.get_products()
 
-    def update_product(self, product):
-        return self.repository.update_product(Product(*product))
+    def update_product(self, product_id, product_name, product_price):
+        return self.repository.update_product(product_id, product_name, product_price)
 
     def delete_product(self, product_id):
         return self.repository.delete_product(product_id)

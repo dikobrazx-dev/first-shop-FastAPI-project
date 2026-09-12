@@ -15,10 +15,10 @@ class ProductRepository:
         connection.close()
         
 
-    def add_product(self, product):
+    def add_product(self, product_name, product_price):
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute("INSERT INTO products(name, price) VALUES(?,?)",(product.name, product.price))
+        cursor.execute("INSERT INTO products(name, price) VALUES(?,?)",(product_name, product_price))
         connection.commit()
         connection.close()
 
@@ -40,10 +40,10 @@ class ProductRepository:
         return Product(*user)
 
 
-    def update_product(self, product):
+    def update_product(self,  product_id, product_name, product_price):
         connection = get_connection()
         cursor = connection.cursor()
-        cursor.execute("UPDATE products SET name=?, price=? WHERE id=?",(product.name, product.price, product.id))
+        cursor.execute("UPDATE products SET name=?, price=? WHERE id=?",(product_name, product_price, product_id))
         connection.commit()
         connection.close()
 
