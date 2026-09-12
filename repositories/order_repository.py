@@ -85,11 +85,11 @@ class OrderRepository:
         connection.close()
 
 
-    def add_order_item(self, item):
+    def add_order_item(self, item_order_id, item_product_id, item_quantity):
         connection = get_connection()
         cursor = connection.cursor()
         cursor.execute("INSERT INTO order_items(order_id, product_id, quantity) VALUES(?,?,?)",\
-        (item.order_id, item.product_id, item.quantity))
+        (item_order_id, item_product_id, item_quantity))
         connection.commit()
         connection.close()
 

@@ -1,5 +1,4 @@
 
-from models.order_item import OrderItem
 class OrderService:
 
     def __init__(self, order_repository, user_service, product_service):
@@ -42,8 +41,8 @@ class OrderService:
     def create_order_items_table(self):
         return self.order_repository.create_order_items_table()
 
-    def add_order_item(self, item):
-        return self.order_repository.add_order_item(OrderItem(*item))
+    def add_order_item(self, item_order_id, item_product_id, item_quantity):
+        return self.order_repository.add_order_item(item_order_id, item_product_id, item_quantity)
 
     def get_order_items(self, order_id):
         return self.order_repository.get_order_items(order_id)
