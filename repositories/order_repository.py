@@ -85,6 +85,7 @@ class OrderRepository:
         connection = get_connection()
         cursor = connection.cursor()
         try:
+            cursor.execute("DELETE FROM order_items WHERE order_id=?",(order_id,))
             cursor.execute("DELETE FROM orders WHERE id=?",(order_id,))
             connection.commit()
         except sqlite3.Error:
@@ -179,7 +180,18 @@ class OrderRepository:
         finally:
             connection.close()
 
-        
+    def delete_order_item(self, item_order_id, item_product_id):
+        connection = get_connection()
+        cursor = connection.cursor()
+        try:
+            cursor.execute("DELETE FROM order_items WHERE order_id=? AND product_id=?",(item_order_id, item_product_id))
+            connection.commit()
+        except sqlite3.Error:
+            connection.rollback()
+            raise
+
+        finally:
+            connection.close()
 
 
     def delete_order_items_table(self):

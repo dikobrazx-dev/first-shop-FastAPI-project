@@ -86,6 +86,7 @@ class UserRepository:
         connection = get_connection()
         cursor = connection.cursor()
         try:
+            cursor.execute("DELETE FROM orders WHERE user_id=?",(user_id,))
             cursor.execute("DELETE FROM users WHERE id=?",(user_id,))
             connection.commit()
         except sqlite3.Error:

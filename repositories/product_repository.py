@@ -82,6 +82,18 @@ class ProductRepository:
             connection.close()
 
         
+    def update_product_price(product_id, new_price):
+        connection = get_connection()
+        cursor = connection.cursor()
+        try:
+            cursor.execute("UPDATE products SET price=? WHERE product_id=?",(new_price, product_id))
+            connection.commit()
+        except sqlite3.Error:
+            connection.rollback()
+            raise
+
+        finally:
+            connection.close()
 
 
     def delete_product(self, product_id):
