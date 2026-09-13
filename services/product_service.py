@@ -20,6 +20,9 @@ class ProductService:
     def update_product(self, product_id, product_name, product_price):
         return self.repository.update_product(product_id, product_name, product_price)
 
+    def update_product_price(self, product_id, new_price):
+        return self.repository.update_product_price(product_id, new_price)
+
     def delete_product(self, product_id):
         return self.repository.delete_product(product_id)
         

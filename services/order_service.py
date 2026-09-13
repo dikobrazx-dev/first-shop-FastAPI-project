@@ -61,5 +61,8 @@ class OrderService:
     def get_order_items(self, order_id):
         return self.order_repository.get_order_items(order_id)
 
+    def delete_order_item(self, item_order_id, item_product_id):
+        return  self.order_repository.delete_order_item(item_order_id, item_product_id)
+
     def delete_order_items_table(self):
         return self.order_repository.delete_order_items_table()
