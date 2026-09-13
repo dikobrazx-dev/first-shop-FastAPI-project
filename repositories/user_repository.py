@@ -22,11 +22,11 @@ class UserRepository:
 
 
 
-    def add_user(self, user_id):
+    def add_user(self, name):
         connection = get_connection()
         cursor = connection.cursor()
         try:
-            cursor.execute("INSERT INTO users(name) VALUES(?)",(user_id,))
+            cursor.execute("INSERT INTO users(name) VALUES(?)",(name,))
             connection.commit()
         except sqlite3.Error:
             connection.rollback()
