@@ -50,7 +50,7 @@ class UpdatePriceInput(BaseModel):
 @app.post("/users")
 def add_user(payload: UserCreateInput):
     try:
-        UserService.add_user(user_name=payload.user_name)
+        MyUserService.add_user(user_name=payload.user_name)
         return {"status": "success", "message": "User has been successfully added"}
     except Exception as ex:
         raise HTTPException(status_code=500, detail=f"Error from server: {str(ex)}")
@@ -58,7 +58,7 @@ def add_user(payload: UserCreateInput):
 @app.get("/users")
 def get_users():
     try:
-        users = UserService.get_users()
+        users = MyUserService.get_users()
         return users
     except Exception as ex:
         raise HTTPException(status_code=500, detail=f"Error from server: {str(ex)}")
@@ -69,7 +69,7 @@ def get_users():
 @app.put("/users/{user_id}")
 def change_user_name(user_id: int, payload: UpdateUserInput):
     try:
-        UserService.update_user(user_id=user_id, user_name=payload.user_name)
+        MyUserService.update_user(user_id=user_id, user_name=payload.user_name)
         return {"status": "success", "message": "User has been successfully updated"}
     except Exception as ex:
         raise HTTPException(status_code=500, detail=str(ex))
@@ -77,7 +77,7 @@ def change_user_name(user_id: int, payload: UpdateUserInput):
 @app.delete("/users/{user_id}")
 def remove_user(user_id: int):
     try:
-        UserService.delete_user(user_id=user_id)
+        MyUserService.delete_user(user_id=user_id)
         return {"status": "success", "message": "User and user's orders has been successfully deleted"}
     except Exception as ex:
         raise HTTPException(status_code=500, detail=str(ex))
@@ -86,7 +86,7 @@ def remove_user(user_id: int):
 @app.post("/products")
 def add_product(payload: ProductCreateInput):
     try:
-        ProductService.add_product(product_name=payload.product_name, product_price=payload.product_price)
+        MyProductService.add_product(product_name=payload.product_name, product_price=payload.product_price)
         return {"status": "success", "message": "Product has been successfully added"}
     except Exception as ex:
         raise HTTPException(status_code=500, detail=f"Error from server: {str(ex)}")
@@ -98,7 +98,7 @@ class UpdateOrderInput(BaseModel):
 @app.put("/orders/{id}")
 def change_order_owner(id: int, payload: UpdateOrderInput):
     try:
-        OrderService.update_order(id=id, user_id=payload.user_id)
+        MyOrderService.update_order(id=id, user_id=payload.user_id)
         return {"status": "success", "message": "Order's owner has been updated"}
     except Exception as ex:
         raise HTTPException(status_code=500, detail=str(ex))
@@ -107,7 +107,7 @@ def change_order_owner(id: int, payload: UpdateOrderInput):
 @app.delete("/orders/{order_id}")
 def purge_order(order_id: int):
     try:
-        OrderService.delete_order(order_id=order_id)
+        MyOrderService.delete_order(order_id=order_id)
         return {"status": "success", "message":  "order has been successfully deleted"}
     except Exception as ex:
         raise HTTPException(status_code=500, detail=str(ex))
@@ -116,7 +116,7 @@ def purge_order(order_id: int):
 @app.get("/products")
 def get_products():
     try:
-        products = ProductService.get_products()
+        products = MyProductService.get_products()
         return products
     except Exception as ex:
         raise HTTPException(status_code=500, detail=f"Error from server: {str(ex)}")
@@ -126,7 +126,7 @@ def get_products():
 @app.put("/products/{product_id}")
 def change_product_price(product_id: int, payload: UpdatePriceInput):
     try:
-        ProductService.update_product_price(product_id=product_id, new_price=payload.new_price)
+        MyProductService.update_product_price(product_id=product_id, new_price=payload.new_price)
         return {"status": "success", "message": "Цена товара обновлена"}
     except Exception as ex:
         raise HTTPException(status_code=500, detail=str(ex))
@@ -135,7 +135,7 @@ def change_product_price(product_id: int, payload: UpdatePriceInput):
 @app.delete("/products/{product_id}")
 def remove_product(product_id: int):
     try:
-        ProductService.delete_product(product_id=product_id)
+        MyProductService.delete_product(product_id=product_id)
         return {"status": "success", "message": "Товар успешно удален из базы"}
     except Exception as ex:
         raise HTTPException(status_code=500, detail=str(ex))
@@ -143,7 +143,7 @@ def remove_product(product_id: int):
 @app.post("/orders")
 def add_order(payload: OrderCreateInput):
     try:
-        OrderService.add_order(user_id=payload.user_id)
+        MyOrderService.add_order(user_id=payload.user_id)
         return {"status": "success", "message": "Order has been successfully added"}
     except Exception as ex:
         raise HTTPException(status_code=500, detail=f"Error from server: {str(ex)}")
@@ -151,7 +151,7 @@ def add_order(payload: OrderCreateInput):
 @app.post("/orders/items")
 def add_order_item(payload: OrderItemCreateInput):
     try:
-        OrderService.add_order_item(
+        MyOrderService.add_order_item(
             item_order_id=payload.item_order_id,
             item_product_id=payload.item_product_id,
             item_quantity=payload.item_quantity
@@ -163,7 +163,7 @@ def add_order_item(payload: OrderItemCreateInput):
 @app.get("/orders/{order_id}/items")
 def get_order_items(order_id: int):
     try:
-        items = OrderService.get_order_items(order_id=order_id)
+        items = MyOrderService.get_order_items(order_id=order_id)
         if not items:
             raise HTTPException(status_code=404, detail=f"There is not any product in order {order_id} or it does not exist")
 
