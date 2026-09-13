@@ -21,6 +21,12 @@ MyProductService = ProductService(MyProductRepository)
 MyOrderRepository = OrderRepository()
 MyOrderService = OrderService(MyOrderRepository, MyUserService, MyProductService)
 
+MyUserService.create_table()
+MyOrderService.create_orders_table()
+MyProductService.create_table()
+MyOrderService.create_order_items_table()
+
+
 app = FastAPI(title="Мой интернет магазин")
 
 class UserCreateInput(BaseModel):
