@@ -1,7 +1,8 @@
-import sqlite3
-from pathlib import Path
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
-DB_path = Path(__file__).parent / "SQLiteDataBase.db"
-
-def get_connection():
-    return sqlite3.connect(DB_path)
+engine = create_engine("sqlite:///database/SQLiteDataBase.db")
+SessionLocal = sessionmaker(bind = engine)
+def get_session():
+    with SessionLocal as session:
+        yield session
