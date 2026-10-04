@@ -7,14 +7,14 @@ class UserService:
     def create_table(self):
         return self.repository.create_table()
 
-    def add_user(self, user_name):
-        return self.repository.add_user(user_name)
+    async def add_user(self, user_name):
+        return await self.repository.add_user(user_name)
 
-    def get_user(self, user_id):
-        return self.repository.get_user(user_id)
+    async def get_user(self, user_id):
+        return await self.repository.get_user(user_id)
 
-    def get_users(self):
-        return self.repository.get_users()
+    async def get_users(self):
+        return await self.repository.get_users()
 
     def update_user(self, user_id, user_name):
         return self.repository.update_user(user_id, user_name)

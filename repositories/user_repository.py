@@ -1,70 +1,40 @@
-from database.database import get_connection
-import sqlite3
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+import sqlite3  
+get_connection = 1
 from models.user import User
 class UserRepository:
-    def create_table(self):
-        connection = get_connection()
-        cursor = connection.cursor()
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+
+    async def add_user(self, name):
+        db_user = User(name=name)
         try:
-            cursor.execute("""
-            CREATE TABLE IF NOT EXISTS users(
-                id INTEGER PRIMARY KEY,
-                name TEXT NOT NULL
-            )"""
-            )
-            connection.commit()
-        except sqlite3.Error:
-            connection.rollback()
+            self.session.add(db_user)
+            await self.session.commit()
+        except Exception:
+            self.session.rollback()
             raise
 
-        finally:
-            connection.close()
 
 
-
-    def add_user(self, name):
-        connection = get_connection()
-        cursor = connection.cursor()
+    async def get_users(self):
         try:
-            cursor.execute("INSERT INTO users(name) VALUES(?)",(name,))
-            connection.commit()
-        except sqlite3.Error:
-            connection.rollback()
+            stmt = select(User)
+            result = await self.session.execute(stmt)
+            users = result.scalars().all()
+            return users
+        except Exception:
             raise
-
-        finally:
-            connection.close()
-
-
-
-    def get_users(self):
-        connection = get_connection()
-        cursor = connection.cursor()
-        try:
-            cursor.execute("SELECT * FROM users")
-            users = cursor.fetchall()
-            return [User(*user) for user in users]
-        except sqlite3.Error:
-            raise
-
-        finally:
-            connection.close()
  
 
-    def get_user(self, user_id):
-        connection = get_connection()
-        cursor = connection.cursor()
+    async def get_user(self, user_id):
         try:
-            cursor.execute("SELECT * FROM users WHERE id=?",(user_id,))
-            user = cursor.fetchone()
-            if user is not None:
-                return User(*user)
-        except sqlite3.Error:
+            user = await self.session.get(User, user_id)
+            return user
+        except Exception:
             raise
-
-        finally:
-            connection.close()
- 
 
 
     def update_user(self, user_id, user_name):

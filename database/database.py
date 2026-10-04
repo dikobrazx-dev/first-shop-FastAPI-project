@@ -1,4 +1,4 @@
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker 
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
 from models.base import Base
 from models.order import Order
