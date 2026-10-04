@@ -28,7 +28,7 @@ def get_order_repository(session: AsyncSession = Depends(get_session)):
     return OrderRepository(session)
 
 def get_order_service(
-    order_repo: UserRepository = Depends(get_user_repository),
+    order_repo: UserRepository = Depends(get_order_repository),
     user_service: UserService = Depends(get_user_service),
     product_service: ProductService = Depends(get_product_service)
   ):

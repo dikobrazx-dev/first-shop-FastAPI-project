@@ -1,6 +1,8 @@
-from dataclasses import dataclass
-@dataclass
-class Product:
-    id: int
-    name: str
-    price: int
+from sqlalchemy.orm import Mapped, mapped_column
+from .base import Base
+class Product(Base):
+    __tablename__="products"
+
+    id: Mapped[int]=mapped_column(primary_key=True)
+    name: Mapped[str]
+    price: Mapped[float]

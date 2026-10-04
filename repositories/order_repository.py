@@ -1,38 +1,20 @@
-from database.database import get_connection
+from sqlalchemy import select, delete
+from sqlalchemy.ext.asyncio import AsyncSession
+import sqlite3  
+get_connection = 1
 from models.order import Order
-import sqlite3
 class OrderRepository:
-    def create_orders_table(self):
-        connection = get_connection()
-        cursor = connection.cursor()
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def add_order(self, user_id):
+        db_order = Order(user_id=user_id)
         try:
-            cursor.execute("""
-            CREATE TABLE IF NOT EXISTS orders(
-                id INTEGER PRIMARY KEY,
-                user_id TEXT REFERENCES users(id)
-            )"""
-            )
-            connection.commit()
-        except sqlite3.Error:
-            connection.rollback()
+            self.session.add(db_order)
+            await self.session.commit()
+        except Exception:
+            await self.session.rollback()
             raise
-
-        finally:
-            connection.close()
-
-
-    def add_order(self, user_id):
-        connection = get_connection()
-        cursor = connection.cursor()
-        try:
-            cursor.execute("INSERT INTO orders(user_id) VALUES(?)",(user_id,))
-            connection.commit()
-        except sqlite3.Error:
-            connection.rollback()
-            raise
-
-        finally:
-            connection.close()
 
 
 
@@ -66,34 +48,25 @@ class OrderRepository:
 
         
 
-    def update_order(self, id, user_id):
-        connection = get_connection()
-        cursor = connection.cursor()
+    async def update_order(self, id, user_id):
         try:
-            cursor.execute("UPDATE orders SET user_id=? WHERE id=?",(user_id, id))
-            connection.commit()
-        except sqlite3.Error:
-            connection.rollback()
+            db_order = await self.session.get(Order, id)
+            db_order.user_id = user_id
+            await self.session.commit()
+        except Exception:
+            await self.session.rollback()
             raise
 
-        finally:
-            connection.close()
 
 
-
-    def delete_order(self, order_id):
-        connection = get_connection()
-        cursor = connection.cursor()
+    async def delete_order(self, id):
         try:
-            cursor.execute("DELETE FROM order_items WHERE order_id=?",(order_id,))
-            cursor.execute("DELETE FROM orders WHERE id=?",(order_id,))
-            connection.commit()
-        except sqlite3.Error:
-            connection.rollback()
+            order = await self.session.get(Order, id)
+            self.session.delete(order)
+            await self.session.commit()
+        except Exception:
+            await self.session.rollback()
             raise
-
-        finally:
-            connection.close()
 
     def delete_all_orders(self):
         connection = get_connection()
@@ -107,23 +80,6 @@ class OrderRepository:
 
         finally:
             connection.close()
-
-    def delete_orders_table(self):
-        connection = get_connection()
-        cursor = connection.cursor()
-        try:
-            cursor.execute("DROP TABLE orders")
-            connection.commit()
-        except sqlite3.Error:
-            connection.rollback()
-            raise
-
-        finally:
-            connection.close()
-
- 
-
- 
 
     def create_order_items_table(self):
         connection = get_connection()

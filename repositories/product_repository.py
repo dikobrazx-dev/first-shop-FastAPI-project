@@ -1,56 +1,29 @@
-from database.database import get_connection
+from sqlalchemy import select,delete
+from sqlalchemy.ext.asyncio import AsyncSession
+import sqlite3  
+get_connection = 1
 from models.product import Product
-import sqlite3
 class ProductRepository:
-    def create_table(self):
-        connection = get_connection()
-        cursor = connection.cursor()
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def add_product(self, product_name, product_price):
+        db_product = Product(name=product_name,price=product_price)
         try:
-            cursor.execute("""
-            CREATE TABLE IF NOT EXISTS products(
-                id INTEGER PRIMARY KEY,
-                name TEXT NOT NULL,
-                price INTEGER NOT NULL
-            )"""
-            )
-            connection.commit()
-        except sqlite3.Error:
-            connection.rollback()
+            self.session.add(db_product)
+            await self.session.commit()
+        except Exception:
+            await self.session.rollback()
             raise
 
-        finally:
-            connection.close()
-
-        
-
-    def add_product(self, product_name, product_price):
-        connection = get_connection()
-        cursor = connection.cursor()
+    async def get_products(self):
         try:
-            cursor.execute("INSERT INTO products(name, price) VALUES(?,?)",(product_name, product_price))
-            connection.commit()
-        except sqlite3.Error:
-            connection.rollback()
+            stmt = select(Product)
+            result = await self.session.execute(stmt)
+            products = result.scalars().all()
+            return products
+        except Exception:
             raise
-
-        finally:
-            connection.close()
-
-
-
-    def get_products(self):
-        connection = get_connection()
-        cursor = connection.cursor()
-        try:
-            cursor.execute("SELECT * FROM products")
-            products = cursor.fetchall()
-            return [Product(*product) for product in products]
-        except sqlite3.Error:
-            raise
-
-        finally:
-            connection.close()
-
 
     def get_product(self, product_id):
         connection = get_connection()
@@ -66,69 +39,29 @@ class ProductRepository:
         finally:
             connection.close()
 
-
-
-    def update_product(self,  product_id, product_name, product_price):
-        connection = get_connection()
-        cursor = connection.cursor()
+    async def update_product_price(self, product_id, new_price):
         try:
-            cursor.execute("UPDATE products SET name=?, price=? WHERE id=?",(product_name, product_price, product_id))
-            connection.commit()
-        except sqlite3.Error:
-            connection.rollback()
+            product = await self.session.get(Product, product_id)
+            product.price= new_price
+            await self.session.commit()
+        except Exception:
+            await self.session.rollback()
             raise
 
-        finally:
-            connection.close()
-
-        
-    def update_product_price(product_id, new_price):
-        connection = get_connection()
-        cursor = connection.cursor()
+    async def delete_product(self, product_id):
         try:
-            cursor.execute("UPDATE products SET price=? WHERE product_id=?",(new_price, product_id))
-            connection.commit()
-        except sqlite3.Error:
-            connection.rollback()
+            stmt = delete(Product).where(Product.id==product_id)
+            await self.session.execute(stmt)
+            await self.session.commit()
+        except Exception:
+            await self.session.rollback()
             raise
-
-        finally:
-            connection.close()
-
-
-    def delete_product(self, product_id):
-        connection = get_connection()
-        cursor = connection.cursor()
-        try:
-            cursor.execute("DELETE FROM products WHERE id=?",(product_id,))
-            connection.commit()
-        except sqlite3.Error:
-            connection.rollback()
-            raise
-
-        finally:
-            connection.close()
-
 
     def delete_all(self):
         connection = get_connection()
         cursor = connection.cursor()
         try:
             cursor.execute("DELETE FROM products")
-            connection.commit()
-        except sqlite3.Error:
-            connection.rollback()
-            raise
-
-        finally:
-            connection.close()
-
-
-    def delete_table(self):
-        connection = get_connection()
-        cursor = connection.cursor()
-        try:
-            cursor.execute("DROP TABLE products")
             connection.commit()
         except sqlite3.Error:
             connection.rollback()

@@ -54,7 +54,7 @@ async def remove_product(
     product_id: int,
     product_service: ProductService = Depends(get_product_service)):
     try:
-        await product_service.delete_product(product_id=product_id)
+        await product_service.delete_product(product_id)
         return {"status": "success", "message": "Товар успешно удален из базы"}
     except Exception as ex:
         raise HTTPException(status_code=500, detail=str(ex))

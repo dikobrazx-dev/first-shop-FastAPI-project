@@ -22,7 +22,7 @@ async def create_user(
     order_service: OrderService = Depends(get_order_service)
     ):
     try:
-        await order_service.add_order(user_id=order_data)
+        await order_service.add_order(user_id=order_data.user_id)
         return {"status": "success", "message": "Order has been successfully added"}
     except Exception as ex:
         raise HTTPException(status_code=500, detail=f"Error from server: {str(ex)}")

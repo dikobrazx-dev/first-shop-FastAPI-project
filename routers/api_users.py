@@ -6,9 +6,6 @@ from dependencies import get_user_service
 class UserCreateInput(BaseModel):
     user_name: str
 
-class UserGetById(BaseModel):
-    id: int
-
 class UpdateUserInput(BaseModel):
     user_name: str
 
@@ -21,7 +18,7 @@ async def create_user(
     user_service: UserService = Depends(get_user_service)
     ):
     try:
-        await user_service.add_user(user_name=user_data)
+        await user_service.add_user(user_name=user_data.user_name)
         return {"status": "success", "message": "User has been successfully added"}
     except Exception as ex:
         raise HTTPException(status_code=500, detail=f"Error from server: {str(ex)}")
@@ -37,7 +34,7 @@ async def get_users(
 
 @router.get("/{user_id}")
 async def get_users(
-    user_id: UserGetById,
+    user_id: int,
     user_service: UserService = Depends(get_user_service)
     ):
     try:
