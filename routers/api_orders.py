@@ -17,7 +17,7 @@ class UpdateOrderInput(BaseModel):
 router = APIRouter(prefix="/orders", tags=["Orders"])
 
 @router.post("/")
-async def create_user(
+async def create_order(
     order_data: OrderCreateInput,
     order_service: OrderService = Depends(get_order_service)
     ):

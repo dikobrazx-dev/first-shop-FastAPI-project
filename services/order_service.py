@@ -33,11 +33,11 @@ class OrderService:
         return await self.order_repository.delete_all_orders()
 
     async def add_order_item(self, item_order_id, item_product_id, item_quantity):
-        if self.order_repository.get_order(item_order_id) is None:
+        if await self.order_repository.get_order(item_order_id) is None:
             raise exceptions.OrderNotFoundError(
                 f"Order {item_order_id} not found"
             )
-        if self.product_service.get_product(item_product_id) is None:
+        if await self.product_service.get_product(item_product_id) is None:
             raise exceptions.ProductNotFoundError(
                 f"Product {item_product_id} not found"
             )

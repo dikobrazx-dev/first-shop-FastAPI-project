@@ -25,19 +25,13 @@ class ProductRepository:
         except Exception:
             raise
 
-    def get_product(self, product_id):
-        connection = get_connection()
-        cursor = connection.cursor()
+    async def get_product(self, product_id):
         try:
-            cursor.execute("SELECT * FROM products WHERE id=?",(product_id,))
-            product = cursor.fetchone()
-            if product is not None:
-                return Product(*product)
-        except sqlite3.Error:
+            product = await self.session.get(Product, product_id)
+            return product
+        except Exception:
             raise
 
-        finally:
-            connection.close()
 
     async def update_product_price(self, product_id, new_price):
         try:

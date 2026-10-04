@@ -4,6 +4,7 @@ from models.base import Base
 from models.order import Order
 from models.user import User
 from models.product import Product
+from models.order_item import OrderItem
 
 async_engine = create_async_engine("sqlite+aiosqlite:///database/SQLiteDataBase.db")
 SessionLocal = async_sessionmaker(bind = async_engine)

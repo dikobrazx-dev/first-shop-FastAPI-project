@@ -1,6 +1,9 @@
-from dataclasses import dataclass
-@dataclass
-class OrderItem:
-    order_id: int
-    product_id: int
-    quantity: int
+from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import ForeignKey
+from .base import Base
+class OrderItem(Base):
+    __tablename__="order_items"
+
+    order_id: Mapped[int] = mapped_column(ForeignKey("orders.id"), primary_key=True)
+    product_id: Mapped[int] = mapped_column(ForeignKey("products.id"), primary_key=True)
+    quantity: Mapped[int] = mapped_column(default=1)
