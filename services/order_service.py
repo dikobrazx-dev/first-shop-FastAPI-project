@@ -1,7 +1,16 @@
 import exceptions
+from repositories.order_repository import OrderRepository
+from services.user_service import UserService
+from services.product_service import ProductService
+
 class OrderService:
 
-    def __init__(self, order_repository, user_service, product_service):
+    def __init__(
+        self,
+        order_repository: OrderRepository,
+        user_service: UserService,
+        product_service: ProductService
+        ):
         self.order_repository = order_repository
         self.user_service = user_service
         self.product_service = product_service

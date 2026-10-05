@@ -1,8 +1,7 @@
 from sqlalchemy import select,delete
 from sqlalchemy.ext.asyncio import AsyncSession
-import sqlite3  
-get_connection = 1
 from models.product import Product
+
 class ProductRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
@@ -32,7 +31,6 @@ class ProductRepository:
         except Exception:
             raise
 
-
     async def update_product_price(self, product_id, new_price):
         try:
             product = await self.session.get(Product, product_id)
@@ -51,16 +49,4 @@ class ProductRepository:
             await self.session.rollback()
             raise
 
-    def delete_all(self):
-        connection = get_connection()
-        cursor = connection.cursor()
-        try:
-            cursor.execute("DELETE FROM products")
-            connection.commit()
-        except sqlite3.Error:
-            connection.rollback()
-            raise
-
-        finally:
-            connection.close()
 

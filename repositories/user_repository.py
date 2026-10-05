@@ -1,8 +1,7 @@
 from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
-import sqlite3  
-get_connection = 1
 from models.user import User
+
 class UserRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
@@ -49,17 +48,4 @@ class UserRepository:
         except Exception:
             await self.session.rollback()
             raise
-
-    def delete_all(self):
-        connection = get_connection()
-        cursor = connection.cursor()
-        try:
-            cursor.execute("DELETE FROM users")
-            connection.commit()
-        except sqlite3.Error:
-            connection.rollback()
-            raise
-
-        finally:
-            connection.close()
 
