@@ -1,4 +1,5 @@
 from sqlalchemy import select, delete
+from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from models.order import Order
 from models.order_item import OrderItem
@@ -52,9 +53,15 @@ class OrderRepository:
     
     async def get_order_items(self, order_id):
         try:
-            stmt = select(OrderItem).where(OrderItem.order_id == order_id)
+            stmt = select(OrderItem.product_id, OrderItem.quantity).where(OrderItem.order_id == order_id)
             result = await self.session.execute(stmt)
-            items = result.scalars().all()
+            items = [
+                {
+                    "product_id": product_id,
+                    "quantity": quantity
+                }
+                for product_id, quantity in result.all()
+            ]
             return items
         except Exception:
             raise
@@ -68,3 +75,17 @@ class OrderRepository:
             await self.session.rollback()
             raise
 
+    async def get_order_with_items(self, order_id):
+        try:
+            stmt = (
+            select(Order)
+            .where(Order.id == order_id)
+            .options(
+            selectinload(Order.items).selectinload(OrderItem.product)
+                )
+            )
+            result = await self.session.execute(stmt)
+            order = result.scalar_one_or_none()
+            return order
+        except Exception:
+            raise

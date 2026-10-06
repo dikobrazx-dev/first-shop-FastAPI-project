@@ -27,6 +27,17 @@ async def create_order(
     except Exception as ex:
         raise HTTPException(status_code=500, detail=f"Error from server: {str(ex)}")
 
+@router.get("/{order_id}")
+async def get_order(
+    order_id: int,
+    order_service: OrderService = Depends(get_order_service)
+    ):
+    try:
+        order = await order_service.get_order(order_id)
+        return order
+    except Exception as ex:
+        raise HTTPException(status_code=500, detail=f"Error from server: {str(ex)}")
+
 @router.put("/{id}")
 async def change_order_owner(
     id: int,
@@ -79,7 +90,7 @@ async def get_order_items(
     except Exception as ex:
         raise HTTPException(status_code=500, detail=f"Error from server: {str(ex)}")
 
-@router.delete("{order_id}/{product_id}")
+@router.delete("/{order_id}/{product_id}")
 async def delete_order_item(
     order_id: int,
     product_id: int,
@@ -88,5 +99,16 @@ async def delete_order_item(
     try:
         await order_service.delete_order_item(item_order_id=order_id, item_product_id=product_id)
         return {"status": "success", "message": "Product has been successfully deleted from order"}
+    except Exception as ex:
+        raise HTTPException(status_code=500, detail=f"Error from server: {str(ex)}")
+
+@router.get("/{order_id}/total_price")
+async def total_price(
+    order_id: int,
+    order_service: OrderService = Depends(get_order_service)
+    ):
+    try:
+        total_price = await order_service.total_price(order_id)
+        return total_price
     except Exception as ex:
         raise HTTPException(status_code=500, detail=f"Error from server: {str(ex)}")

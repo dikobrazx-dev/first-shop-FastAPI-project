@@ -42,8 +42,8 @@ class UserRepository:
 
     async def delete_user(self, user_id):
         try:
-            user = await self.session.get(User, user_id)
-            self.session.delete(user)
+            stmt = delete(User).where(User.id==user_id)
+            await self.session.execute(stmt)
             await self.session.commit()
         except Exception:
             await self.session.rollback()
