@@ -1,31 +1,35 @@
-
+import exceptions
+from repositories.user_repository import UserRepository
 
 class UserService:
-    def __init__(self, repository):
+    def __init__(self, repository: UserRepository):
         self.repository = repository
 
-    def create_table(self):
-        return self.repository.create_table()
+    async def add_user(self, user_name):
+        return await self.repository.add_user(user_name)
 
-    def add_user(self, user_name):
-        return self.repository.add_user(user_name)
+    async def get_user(self, user_id):
+        if await self.repository.get_user(user_id) is None:
+            raise exceptions.UserNotFoundError(
+                f"User {user_id} not found"
+            )            
+        return await self.repository.get_user(user_id)
 
-    def get_user(self, user_id):
-        return self.repository.get_user(user_id)
+    async def get_users(self):
+        return await self.repository.get_users()
 
-    def get_users(self):
-        return self.repository.get_users()
+    async def update_user(self, user_id, user_name):
+        if await self.repository.get_user(user_id) is None:
+            raise exceptions.UserNotFoundError(
+                f"User {user_id} not found"
+            )            
+        return await self.repository.update_user(user_id, user_name)
 
-    def update_user(self, user_id, user_name):
-        return self.repository.update_user(user_id, user_name)
-
-    def delete_user(self, user_id):
-        return self.repository.delete_user(user_id)
-        
-    def delete_all(self):
-        return self.repository.delete_all()
-
-    def delete_table(self):
-        return self.repository.delete_table()
+    async def delete_user(self, user_id):
+        if await self.repository.get_user(user_id) is None:
+            raise exceptions.UserNotFoundError(
+                f"User {user_id} not found"
+            )            
+        return await self.repository.delete_user(user_id)
 
     

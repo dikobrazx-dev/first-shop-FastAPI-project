@@ -1,209 +1,91 @@
-from database.database import get_connection
+from sqlalchemy import select, delete
+from sqlalchemy.orm import selectinload
+from sqlalchemy.ext.asyncio import AsyncSession
 from models.order import Order
-import sqlite3
+from models.order_item import OrderItem
+
 class OrderRepository:
-    def create_orders_table(self):
-        connection = get_connection()
-        cursor = connection.cursor()
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def add_order(self, user_id):
+        db_order = Order(user_id=user_id)
         try:
-            cursor.execute("""
-            CREATE TABLE IF NOT EXISTS orders(
-                id INTEGER PRIMARY KEY,
-                user_id TEXT REFERENCES users(id)
-            )"""
-            )
-            connection.commit()
-        except sqlite3.Error:
-            connection.rollback()
+            self.session.add(db_order)
+            await self.session.commit()
+        except Exception:
+            await self.session.rollback()
             raise
 
-        finally:
-            connection.close()
-
-
-    def add_order(self, user_id):
-        connection = get_connection()
-        cursor = connection.cursor()
+    async def get_order(self, order_id):
         try:
-            cursor.execute("INSERT INTO orders(user_id) VALUES(?)",(user_id,))
-            connection.commit()
-        except sqlite3.Error:
-            connection.rollback()
+            order = await self.session.get(Order, order_id)
+            return order
+        except Exception:
             raise
 
-        finally:
-            connection.close()
-
-
-
-    def get_order(self, order_id):
-        connection = get_connection()
-        cursor = connection.cursor()
+    async def update_order(self, id, user_id):
         try:
-            cursor.execute("SELECT * FROM orders WHERE id=?",(order_id,))
-            order = cursor.fetchone()
-            if order is not None:
-                return Order(*order)
-        except sqlite3.Error:
+            db_order = await self.session.get(Order, id)
+            db_order.user_id = user_id
+            await self.session.commit()
+        except Exception:
+            await self.session.rollback()
             raise
 
-        finally:
-            connection.close()
+    async def delete_order(self, id):
+        try:
+            order = await self.session.get(Order, id)
+            self.session.delete(order)
+            await self.session.commit()
+        except Exception:
+            await self.session.rollback()
+            raise
 
+    async def add_order_item(self, item_order_id: int, item_product_id: int, item_quantity: int):
+        db_order_item = OrderItem(order_id = item_order_id, product_id = item_product_id, quantity = item_quantity)
+        try:
+            self.session.add(db_order_item)
+            await self.session.commit()
+        except Exception:
+            await self.session.rollback()
+            raise
     
-    def get_orders(self):
-        connection = get_connection()
-        cursor = connection.cursor()
+    async def get_order_items(self, order_id):
         try:
-            cursor.execute("SELECT * FROM orders")
-            orders = cursor.fetchall()
-            return [Order(*order) for order in orders]
-        except sqlite3.Error:
+            stmt = select(OrderItem.product_id, OrderItem.quantity).where(OrderItem.order_id == order_id)
+            result = await self.session.execute(stmt)
+            items = [
+                {
+                    "product_id": product_id,
+                    "quantity": quantity
+                }
+                for product_id, quantity in result.all()
+            ]
+            return items
+        except Exception:
             raise
 
-        finally:
-            connection.close()
-
-        
-
-    def update_order(self, id, user_id):
-        connection = get_connection()
-        cursor = connection.cursor()
+    async def delete_order_item(self, item_order_id, item_product_id):
         try:
-            cursor.execute("UPDATE orders SET user_id=? WHERE id=?",(user_id, id))
-            connection.commit()
-        except sqlite3.Error:
-            connection.rollback()
+            stmt = delete(OrderItem).where(OrderItem.order_id == item_order_id).where(OrderItem.product_id == item_product_id)
+            await self.session.execute(stmt)
+            await self.session.commit()
+        except Exception:
+            await self.session.rollback()
             raise
 
-        finally:
-            connection.close()
-
-
-
-    def delete_order(self, order_id):
-        connection = get_connection()
-        cursor = connection.cursor()
+    async def get_order_with_items(self, order_id):
         try:
-            cursor.execute("DELETE FROM order_items WHERE order_id=?",(order_id,))
-            cursor.execute("DELETE FROM orders WHERE id=?",(order_id,))
-            connection.commit()
-        except sqlite3.Error:
-            connection.rollback()
-            raise
-
-        finally:
-            connection.close()
-
-    def delete_all_orders(self):
-        connection = get_connection()
-        cursor = connection.cursor()
-        try:
-            cursor.execute("DELETE FROM orders")
-            connection.commit()
-        except sqlite3.Error:
-            connection.rollback()
-            raise
-
-        finally:
-            connection.close()
-
-    def delete_orders_table(self):
-        connection = get_connection()
-        cursor = connection.cursor()
-        try:
-            cursor.execute("DROP TABLE orders")
-            connection.commit()
-        except sqlite3.Error:
-            connection.rollback()
-            raise
-
-        finally:
-            connection.close()
-
- 
-
- 
-
-    def create_order_items_table(self):
-        connection = get_connection()
-        cursor = connection.cursor()
-        try:
-            cursor.execute("""
-            CREATE TABLE IF NOT EXISTS order_items(
-                order_id INTEGER REFERENCES orders(id),
-                product_id INTEGER REFERENCES products(id),
-                quantity INTEGER NOT NULL
-            )"""
+            stmt = (
+            select(Order)
+            .where(Order.id == order_id)
+            .options(
+            selectinload(Order.items).selectinload(OrderItem.product)
+                )
             )
-            connection.commit()
-        except sqlite3.Error:
-            connection.rollback()
+            result = await self.session.execute(stmt)
+            order = result.scalar_one_or_none()
+            return order
+        except Exception:
             raise
-
-        finally:
-            connection.close()
-
-
-
-    def add_order_item(self, item_order_id, item_product_id, item_quantity):
-        connection = get_connection()
-        cursor = connection.cursor()
-        try:
-            cursor.execute("INSERT INTO order_items(order_id, product_id, quantity) VALUES(?,?,?)",\
-            (item_order_id, item_product_id, item_quantity))
-            connection.commit()
-        except sqlite3.Error:
-            connection.rollback()
-            raise
-
-        finally:
-            connection.close()
-
-
-    
-    def get_order_items(self, order_id):
-        connection = get_connection()
-        cursor = connection.cursor()
-        try:
-            cursor.execute("""
-            SELECT products.id, products.name, products.price, order_items.quantity
-            FROM order_items
-            JOIN products ON products.id = order_items.product_id
-            WHERE order_items.order_id = ?
-            """, (order_id,))
-            order_items = cursor.fetchall()
-            return order_items
-        except sqlite3.Error:
-            raise
-
-        finally:
-            connection.close()
-
-    def delete_order_item(self, item_order_id, item_product_id):
-        connection = get_connection()
-        cursor = connection.cursor()
-        try:
-            cursor.execute("DELETE FROM order_items WHERE order_id=? AND product_id=?",(item_order_id, item_product_id))
-            connection.commit()
-        except sqlite3.Error:
-            connection.rollback()
-            raise
-
-        finally:
-            connection.close()
-
-
-    def delete_order_items_table(self):
-        connection = get_connection()
-        cursor = connection.cursor()
-        try:
-            cursor.execute("DROP TABLE order_items")
-            connection.commit()
-        except sqlite3.Error:
-            connection.rollback()
-            raise
-
-        finally:
-            connection.close()
-
