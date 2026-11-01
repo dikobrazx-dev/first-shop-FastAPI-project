@@ -35,3 +35,21 @@ def test_delete_product(client):
 
     response = client.delete(f"/products/{product_id}")
     assert response.status_code == 200
+
+
+def test_create_product_price_zero(client):
+    """Цена товара 0: Pydantic должен вернуть 422."""
+    response = client.post("/products/", json={
+        "product_name": "Free",
+        "product_price": 0
+    })
+    assert response.status_code == 422
+
+
+def test_create_product_price_negative(client):
+    """Отрицательная цена товара: Pydantic должен вернуть 422."""
+    response = client.post("/products/", json={
+        "product_name": "Debt",
+        "product_price": -100
+    })
+    assert response.status_code == 422

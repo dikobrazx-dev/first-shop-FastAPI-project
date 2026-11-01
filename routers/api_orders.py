@@ -1,16 +1,16 @@
 from typing import List
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from services.order_service import OrderService
 from dependencies import get_order_service
 
 class OrderCreateInput(BaseModel):
-    user_id: int
+    user_id: int = Field(gt=0)
 
 class OrderItemCreateInput(BaseModel):
-    item_order_id: int
-    item_product_id: int
-    item_quantity: int
+    item_order_id: int = Field(gt=0)
+    item_product_id: int = Field(gt=0)
+    item_quantity: int = Field(gt=0)
 
 class UpdateOrderInput(BaseModel):
     user_id: int
