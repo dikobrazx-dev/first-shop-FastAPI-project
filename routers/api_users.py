@@ -20,14 +20,14 @@ router = APIRouter(prefix="/users", tags=["Users"])
 async def create_user(
     user_data: UserCreateInput,
     user_service: UserService = Depends(get_user_service)
-    ):
+    ) -> dict[str, str]:
     await user_service.add_user(user_name=user_data.user_name)
     return {"status": "success", "message": "User has been successfully added"}
 
 @router.get("/", response_model=List[UserOut])
 async def get_users(
     user_service: UserService = Depends(get_user_service)
-    ):
+    ) -> List[UserOut]:
     users = await user_service.get_users()
     return [UserOut(id=u.id, name=u.name) for u in users]
 
@@ -35,7 +35,7 @@ async def get_users(
 async def get_user(
     user_id: int,
     user_service: UserService = Depends(get_user_service)
-    ):
+    ) -> UserOut:
     user = await user_service.get_user(user_id)
     return UserOut(id=user.id, name=user.name)
 
@@ -44,7 +44,7 @@ async def change_user_name(
     user_id: int,
     payload: UpdateUserInput,
     user_service: UserService = Depends(get_user_service)
-    ):
+    ) -> dict[str, str]:
     await user_service.update_user(user_id=user_id, user_name=payload.user_name)
     return {"status": "success", "message": "User has been successfully updated"}
 
@@ -52,6 +52,6 @@ async def change_user_name(
 async def remove_user(
     user_id: int,
     user_service: UserService = Depends(get_user_service)
-    ):
+    ) -> dict[str, str]:
     await user_service.delete_user(user_id=user_id)
     return {"status": "success", "message": "User and user's orders has been successfully deleted"}
