@@ -71,7 +71,7 @@ async def add_order_item(
     )
     return {"status": "success", "message": "Product has been successfully added in order"}
 
-@router.get("/{order_id}/items", response_model=OrderItemOut)
+@router.get("/{order_id}/items", response_model=List[OrderItemOut])
 async def get_order_items(
     order_id: int,
     order_service: OrderService = Depends(get_order_service)
