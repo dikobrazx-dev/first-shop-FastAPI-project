@@ -15,9 +15,9 @@ class UserRepository:
             await self.session.rollback()
             raise
 
-    async def get_users(self):
+    async def get_users(self, skip: int = 0, limit: int = 100):
         try:
-            stmt = select(User)
+            stmt = select(User).offset(skip).limit(limit)
             result = await self.session.execute(stmt)
             users = result.scalars().all()
             return users

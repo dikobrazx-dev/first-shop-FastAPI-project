@@ -6,5 +6,6 @@ __pycache__/
 
 database/SQLiteDataBase.db
 test.py
-
+.pytest_cache
+.vscode
 *.db

@@ -1,8 +1,9 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import Depends
+from fastapi import Depends, Query
 from database.database import get_session
 from services.user_service import UserService
 from repositories.user_repository import UserRepository
+from schemas import PaginationParams
 
 def get_user_repository(session: AsyncSession = Depends(get_session)):
     return UserRepository(session)
@@ -33,3 +34,10 @@ def get_order_service(
     product_service: ProductService = Depends(get_product_service)
   ):
     return OrderService(order_repo, user_service, product_service)
+
+def get_pagination_params(
+        skip: int = Query(default=0, ge=0),
+        limit: int = Query(default=100, ge=1)
+    ):
+    return PaginationParams(skip=skip, limit=limit)
+

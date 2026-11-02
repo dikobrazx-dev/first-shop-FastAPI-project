@@ -1,18 +1,8 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from typing import List
-from pydantic import BaseModel
+from schemas import UserCreateInput, UpdateUserInput, UserOut
 from services.user_service import UserService
 from dependencies import get_user_service
-
-class UserCreateInput(BaseModel):
-    user_name: str
-
-class UpdateUserInput(BaseModel):
-    user_name: str
-
-class UserOut(BaseModel):
-    id: int
-    name: str
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -26,9 +16,11 @@ async def create_user(
 
 @router.get("/", response_model=List[UserOut])
 async def get_users(
-    user_service: UserService = Depends(get_user_service)
-    ) -> List[UserOut]:
-    users = await user_service.get_users()
+    user_service: UserService = Depends(get_user_service),
+    skip: int = Query(default=0, ge=0),
+    limit: int = Query(default=100, ge=1, le=1000),
+) -> List[UserOut]:
+    users = await user_service.get_users(skip=skip, limit=limit)
     return [UserOut(id=u.id, name=u.name) for u in users]
 
 @router.get("/{user_id}", response_model=UserOut)

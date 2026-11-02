@@ -1,24 +1,8 @@
 from typing import List
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel, Field
+from schemas import ProductCreateInput, UpdatePriceInput, ProductOut
 from services.product_service import ProductService
 from dependencies import get_product_service
-
-class ProductCreateInput(BaseModel):
-    product_name: str
-    product_price: int = Field(gt=0)
-
-class UpdateOrderInput(BaseModel):
-    user_id: int
-
-class UpdatePriceInput(BaseModel):
-    new_price: float
-
-class ProductOut(BaseModel):
-    id: int
-    name: str
-    price: float
-
 
 router = APIRouter(prefix="/products", tags=["Products"])
 

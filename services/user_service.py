@@ -17,8 +17,8 @@ class UserService:
             )
         return user
 
-    async def get_users(self) -> list[User]:
-        return await self.repository.get_users()
+    async def get_users(self, skip: int = 0, limit: int = 100) -> list[User]:
+        return await self.repository.get_users(skip=skip, limit=limit)
 
     async def update_user(self, user_id: int, user_name: str) -> None:
         if await self.repository.get_user(user_id) is None:
