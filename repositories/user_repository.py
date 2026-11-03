@@ -6,8 +6,8 @@ class UserRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def add_user(self, name):
-        db_user = User(name=name)
+    async def add_user(self, name: str, hashed_password: str):
+        db_user = User(name=name, hashed_password=hashed_password)
         try:
             self.session.add(db_user)
             await self.session.commit()
@@ -28,6 +28,14 @@ class UserRepository:
         try:
             user = await self.session.get(User, user_id)
             return user
+        except Exception:
+            raise
+
+    async def get_user_by_name(self, name: str):
+        try:
+            stmt = select(User).where(User.name == name)
+            result = await self.session.execute(stmt)
+            return result.scalars().first()
         except Exception:
             raise
 

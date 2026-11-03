@@ -3,6 +3,8 @@ from typing import List
 from schemas import UserCreateInput, UpdateUserInput, UserOut
 from services.user_service import UserService
 from dependencies import get_user_service
+from dependencies import get_current_user
+from models.user import User
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -26,8 +28,9 @@ async def get_users(
 @router.get("/{user_id}", response_model=UserOut)
 async def get_user(
     user_id: int,
-    user_service: UserService = Depends(get_user_service)
-    ) -> UserOut:
+    user_service: UserService = Depends(get_user_service),
+    current_user: User = Depends(get_current_user)
+) -> UserOut:
     user = await user_service.get_user(user_id)
     return UserOut(id=user.id, name=user.name)
 

@@ -5,6 +5,7 @@ from database.database import create_tables,drop_tables
 from routers.api_users import router as user_router
 from routers.api_products import router as product_router
 from routers.api_orders import router as order_router
+from routers.api_auth import router as auth_router
 import exceptions
 from exceptions import UserNotFoundError, ProductNotFoundError, OrderNotFoundError, InvalidQuantityError, ServiceError
 
@@ -39,4 +40,5 @@ async def service_error_handler(request: Request, exc: ServiceError):
 app.include_router(user_router)
 app.include_router(product_router)
 app.include_router(order_router)
+app.include_router(auth_router)
 

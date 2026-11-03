@@ -10,5 +10,6 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
+    hashed_password: Mapped[str|None] 
 
     orders: Mapped[List["Order"]] = relationship(back_populates = "user")

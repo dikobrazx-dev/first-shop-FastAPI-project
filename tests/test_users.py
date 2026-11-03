@@ -8,11 +8,9 @@ def test_create_user(client):
 
 
 def test_get_user_not_found(client):
-    """Запрос несуществующего пользователя: ожидаем 404."""
+    """Запрос несуществующего пользователя: ожидаем 401 (роут защищён авторизацией)."""
     response = client.get("/users/999")
-    assert response.status_code == 404
-    data = response.json()
-    assert "detail" in data
+    assert response.status_code == 401
 
 
 def test_get_users_list(client):

@@ -16,9 +16,12 @@ def user_service(mock_repo):
 
 
 def test_add_user_calls_repository_with_name(user_service, mock_repo):
-    """Сервис должен передать имя в репозиторий."""
+    """Сервис должен передать имя и хеш пароля в репозиторий."""
     asyncio.run(user_service.add_user("Alice"))
-    mock_repo.add_user.assert_called_once_with("Alice")
+    mock_repo.add_user.assert_called_once()
+    args, _ = mock_repo.add_user.call_args
+    assert args[0] == "Alice"
+    assert args[1].startswith("$argon2")
 
 
 def test_get_user_returns_repository_result(user_service, mock_repo):
