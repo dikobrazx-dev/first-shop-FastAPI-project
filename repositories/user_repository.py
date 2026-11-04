@@ -11,6 +11,8 @@ class UserRepository:
         try:
             self.session.add(db_user)
             await self.session.commit()
+            await self.session.refresh(db_user)
+            return db_user
         except Exception:
             await self.session.rollback()
             raise

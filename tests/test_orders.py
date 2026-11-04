@@ -1,6 +1,6 @@
 def test_create_order(client):
     """Создание заказа: сначала нужен пользователь, потом заказ."""
-    client.post("/users/", json={"user_name": "Order User"})
+    client.post("/users/", json={"user_name": "Order User", "password": "secret123"})
     users = client.get("/users/").json()
     user_id = users[-1]["id"]
 
@@ -19,7 +19,7 @@ def test_get_order_not_found(client):
 def test_add_order_item(client):
     """Добавление товара в заказ: нужны пользователь, товар и заказ."""
     # Создаём пользователя
-    client.post("/users/", json={"user_name": "Item User"})
+    client.post("/users/", json={"user_name": "Item User", "password": "secret123"})
     users = client.get("/users/").json()
     user_id = users[-1]["id"]
 
@@ -42,7 +42,7 @@ def test_add_order_item(client):
 def test_get_order_items(client):
     """Получение позиций заказа: ожидаем 200 и список."""
     # Подготовка: создаём пользователя, товар, заказ и позицию
-    client.post("/users/", json={"user_name": "Items User"})
+    client.post("/users/", json={"user_name": "Items User", "password": "secret123"})
     users = client.get("/users/").json()
     user_id = users[-1]["id"]
 
@@ -66,7 +66,7 @@ def test_get_order_items(client):
 def test_delete_order_item(client):
     """Удаление позиции из заказа: ожидаем 200."""
     # Создаём пользователя и товар, если ещё нет
-    client.post("/users/", json={"user_name": "Delete User"})
+    client.post("/users/", json={"user_name": "Delete User", "password": "secret123"})
     users = client.get("/users/").json()
     user_id = users[-1]["id"]
 
@@ -88,7 +88,7 @@ def test_delete_order_item(client):
 def test_total_price(client):
     """Получение общей суммы заказа: ожидаем 200 и число."""
     # Подготовка: создаём пользователя, товар, заказ и позицию
-    client.post("/users/", json={"user_name": "Total User"})
+    client.post("/users/", json={"user_name": "Total User", "password": "secret123"})
     users = client.get("/users/").json()
     user_id = users[-1]["id"]
 
@@ -112,7 +112,7 @@ def test_total_price(client):
 def test_add_order_item_invalid_quantity(client):
     """Добавление позиции с количеством 0 или отрицательным: ожидаем 422 от Pydantic."""
     # Создаём пользователя
-    client.post("/users/", json={"user_name": "Qty User"})
+    client.post("/users/", json={"user_name": "Qty User", "password": "secret123"})
     users = client.get("/users/").json()
     user_id = users[-1]["id"]
 

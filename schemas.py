@@ -9,6 +9,7 @@ class PaginationParams(BaseModel):
 
 class UserCreateInput(BaseModel):
     user_name: str = Field(min_length=1)
+    password: str = Field(min_length=8)
 
 
 class UpdateUserInput(BaseModel):

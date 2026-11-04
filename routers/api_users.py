@@ -13,7 +13,7 @@ async def create_user(
     user_data: UserCreateInput,
     user_service: UserService = Depends(get_user_service)
     ) -> dict[str, str]:
-    await user_service.add_user(user_name=user_data.user_name)
+    await user_service.add_user(user_name=user_data.user_name, password=user_data.password)
     return {"status": "success", "message": "User has been successfully added"}
 
 @router.get("/", response_model=List[UserOut])

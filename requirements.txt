@@ -7,5 +7,5 @@ alembic
 pytest
 httpx
 pwdlib[argon2]
-python-jose[cryptography]
-python-multipart
+Pyjwt
+pydantic_settings

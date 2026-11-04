@@ -1,14 +1,13 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import Depends, HTTPException, status
-from jose import JWTError, jwt
-from datetime import datetime, timezone
-
+from fastapi import Depends
+import jwt, exceptions
+from config import settings
 from database.database import get_session
 from services.user_service import UserService
 from repositories.user_repository import UserRepository
-from auth import SECRET_KEY, ALGORITHM, oauth2_scheme
+from auth import oauth2_scheme
 from models.user import User
-import exceptions
+from exceptions import credentials_exception
 
 
 def get_user_repository(session: AsyncSession = Depends(get_session)):
@@ -59,17 +58,12 @@ async def get_current_user(
     token: str = Depends(oauth2_scheme),
     user_service: UserService = Depends(get_user_service)
 ) -> User:
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Не удалось подтвердить учётные данные",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, key=settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         user_id: str = payload.get("sub")
         if user_id is None:
             raise credentials_exception
-    except JWTError:
+    except :
         raise credentials_exception
 
     user = await user_service.get_user(int(user_id))

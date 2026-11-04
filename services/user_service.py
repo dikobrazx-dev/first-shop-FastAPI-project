@@ -7,18 +7,13 @@ class UserService:
     def __init__(self, repository: UserRepository):
         self.repository = repository
 
-    async def add_user(self, user_name: str) -> None:
-        hashed = get_password_hash(user_name)
-        return await self.repository.add_user(user_name, hashed)
+    async def add_user(self, user_name: str, password: str) -> None:
+        hashed_password = get_password_hash(password)
+        return await self.repository.add_user(user_name, hashed_password)
 
     async def register_user(self, user_name: str, password: str) -> User:
-        existing = await self.repository.get_user_by_name(user_name)
-        if existing:
-            raise exceptions.UserAlreadyExistsError(
-                f"User {user_name} already exists"
-            )
-        hashed = get_password_hash(password)
-        return await self.repository.add_user(user_name, hashed)
+        hashed_password = get_password_hash(password)
+        return await self.repository.add_user(user_name, hashed_password)
 
     async def authenticate_user(self, user_name: str, password: str) -> User | None:
         user = await self.repository.get_user_by_name(user_name)

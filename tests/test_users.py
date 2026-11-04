@@ -1,6 +1,6 @@
 def test_create_user(client):
     """Создание пользователя: ожидаем 200 и сообщение об успехе."""
-    response = client.post("/users/", json={"user_name": "Alice"})
+    response = client.post("/users/", json={"user_name": "Alice", "password": "secret123"})
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "success"
@@ -23,7 +23,7 @@ def test_get_users_list(client):
 
 def test_update_user(client):
     """Обновление имени пользователя: создаём, узнаём id, меняем имя."""
-    client.post("/users/", json={"user_name": "Bob"})
+    client.post("/users/", json={"user_name": "Bob", "password": "secret123"})
     users = client.get("/users/").json()
     user_id = users[-1]["id"]  # берём последнего созданного
 
@@ -33,7 +33,7 @@ def test_update_user(client):
 
 def test_delete_user(client):
     """Удаление пользователя: создаём, узнаём id, удаляем."""
-    client.post("/users/", json={"user_name": "ToDelete"})
+    client.post("/users/", json={"user_name": "ToDelete", "password": "secret123"})
     users = client.get("/users/").json()
     user_id = users[-1]["id"]
 

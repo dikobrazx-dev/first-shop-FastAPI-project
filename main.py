@@ -1,7 +1,6 @@
 from fastapi import FastAPI, Request
 from contextlib import asynccontextmanager
 from fastapi.responses import JSONResponse
-from database.database import create_tables,drop_tables
 from routers.api_users import router as user_router
 from routers.api_products import router as product_router
 from routers.api_orders import router as order_router
@@ -11,8 +10,6 @@ from exceptions import UserNotFoundError, ProductNotFoundError, OrderNotFoundErr
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print ("Старт сервера: Создание таблиц...")
-    await create_tables()
     yield
 
 app = FastAPI(title="Мой интернет магазин",lifespan=lifespan)
